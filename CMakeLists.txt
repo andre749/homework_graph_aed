@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME} main.cpp
         edge.h
         window_manager.h
         path_finding_manager.h
+
 )
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML-2.5.1/lib/cmake/SFML")
