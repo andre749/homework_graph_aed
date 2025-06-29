@@ -64,8 +64,34 @@ class PathFindingManager {
     // En cada iteración de los algoritmos esta función es llamada para dibujar los cambios en el 'window_manager'
     void render() {
         sf::sleep(sf::milliseconds(10));
-        // TODO: Add your code here
+
+        sf::RenderWindow& window = window_manager->get_window();
+
+        window.clear(sf::Color::White);
+
+        // Dibujar las aristas visitadas (en color claro o intermedio)
+        for (sfLine& edge : visited_edges) {
+            edge.draw(window, sf::RenderStates::Default);
+        }
+
+        // Dibujar el camino final (por encima, para destacarlo)
+        for (sfLine& segment : path) {
+            segment.draw(window, sf::RenderStates::Default);
+        }
+
+        // Dibujar el nodo de inicio (en un color distinto si lo deseas)
+        if (src != nullptr) {
+            src->draw(window);
+        }
+
+        // Dibujar el nodo de destino
+        if (dest != nullptr) {
+            dest->draw(window);
+        }
+
+        window.display();
     }
+
 
     //* --- set_final_path ---
     // Esta función se usa para asignarle un valor a 'this->path' al final de la simulación del algoritmo.
