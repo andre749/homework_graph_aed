@@ -10,6 +10,7 @@
 #include "graph.h"
 #include <unordered_map>
 #include <set>
+#include <queue>
 #include <algorithm>
 
 
@@ -49,8 +50,53 @@ class PathFindingManager {
 
     void dijkstra(Graph &graph) {
         std::unordered_map<Node *, Node *> parent;
-        // TODO: Add your code here
+        std::unordered_map<Node *, double> distance;
 
+        for (auto& node: graph.nodes) {
+            distance[node.second] = std::numeric_limits<double>::infinity();
+        }
+        distance[src] = 0.0;
+
+        using Pair = std::pair<double, Node*>;
+        std::priority_queue<Pair, std::vector<Pair>, std::greater<>> pq;
+        pq.emplace(0.0, src);
+
+        while (!pq.empty()) {
+            auto [current_distance, current_node] = pq.top();
+            pq.pop();
+
+            if (current_node == dest) break;
+
+            if (current_distance > distance[current_node]) continue;
+
+            for (Edge* edge : current_node->edges) {
+                Node *neighbor;
+                if(edge->src == current_node){
+                    neighbor = edge->dest;
+                } else{
+                    neighbor = edge->src;;
+                }
+
+                if (edge->one_way && edge->src != current_node) continue;
+
+                double new_distance = distance[current_node] + edge->length;
+
+                if (new_distance < distance[neighbor]) {
+                    distance[neighbor] = new_distance;
+                    parent[neighbor] = current_node;
+                    pq.emplace(new_distance, neighbor);
+
+                    visited_edges.emplace_back(
+                            current_node->coord,
+                            neighbor->coord,
+                            sf::Color(150, 150, 150),
+                            1.0f
+                    );
+
+                    render();
+                }
+            }
+        }
         set_final_path(parent);
     }
 
