@@ -10,6 +10,7 @@
 #include "graph.h"
 #include <unordered_map>
 #include <set>
+#include <algorithm>
 
 
 // Este enum sirve para identificar el algoritmo que el usuario desea simular
@@ -109,9 +110,25 @@ class PathFindingManager {
     // Este path será utilizado para hacer el 'draw()' del 'path' entre 'src' y 'dest'.
     //*
     void set_final_path(std::unordered_map<Node *, Node *> &parent) {
-        Node* current = dest;
+        path.clear();
 
-        // TODO: Add your code here
+        // Reconstruir el camino desde dest hasta src
+        Node* current = dest;
+        while (current && parent.count(current) && parent[current] != nullptr) {
+            Node* prev = parent[current];
+            // Crea la línea entre prev->coord y current->coord,
+            // usa un color llamativo y un grosor mayor para destacar el camino
+            path.emplace_back(
+                    prev->coord,
+                    current->coord,
+                    sf::Color::Red,     // color del camino final
+                    2.0f                // grosor del camino final
+            );
+            current = prev;
+        }
+
+        // Ahora el vector está de atrás hacia adelante; lo invertimos
+        std::reverse(path.begin(), path.end());
     }
 
 public:
@@ -121,12 +138,32 @@ public:
     explicit PathFindingManager(WindowManager *window_manager) : window_manager(window_manager) {}
 
     void exec(Graph &graph, Algorithm algorithm) {
+        // Si no hay origen o destino, nada que hacer
         if (src == nullptr || dest == nullptr) {
             return;
         }
 
-        // TODO: Add your code here
+        // 1) Limpiar estado previo
+        path.clear();
+        visited_edges.clear();
+
+        // 2) Ejecutar el algoritmo seleccionado
+        switch (algorithm) {
+            case Dijkstra:
+                dijkstra(graph);
+                break;
+            case AStar:
+                a_star(graph);
+                break;
+            default:
+                // Ningún algoritmo válido, salimos
+                return;
+        }
+
+        // 3) Mostrar el camino completo al final
+        render();
     }
+
 
     void reset() {
         path.clear();
