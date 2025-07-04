@@ -150,11 +150,6 @@ class PathFindingManager {
         set_final_path(parent);
     }
 
-    static double heuristic(Node* a, Node* b) {
-        double dx = a->coord.x - b->coord.x;
-        double dy = a->coord.y - b->coord.y;
-        return sqrt(dx * dx + dy * dy);
-    }
 
 
 
