@@ -149,6 +149,10 @@ struct Edge {
         }
     }
 
+    double getCost(){
+        return length/max_speed;
+    }
+
     void draw(sf::RenderWindow &window) const {
         sfLine line(src->coord, dest->coord, color, thickness);
         line.draw(window, sf::RenderStates::Default);

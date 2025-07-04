@@ -47,6 +47,9 @@ class PathFindingManager {
             return dist < other.dist;
         }
     };
+    double heuristic(Node* a, Node* b) {
+        return std::hypot(a->coord.x - b->coord.x, a->coord.y - b->coord.y);
+    }
 
     void dijkstra(Graph &graph) {
         std::unordered_map<Node *, Node *> parent;
@@ -79,7 +82,7 @@ class PathFindingManager {
 
                 if (edge->one_way && edge->src != current_node) continue;
 
-                double new_distance = distance[current_node] + edge->length;
+                double new_distance = distance[current_node] + edge->getCost();
 
                 if (new_distance < distance[neighbor]) {
                     distance[neighbor] = new_distance;
@@ -102,8 +105,48 @@ class PathFindingManager {
 
     void a_star(Graph &graph) {
         std::unordered_map<Node *, Node *> parent;
-        // TODO: Add your code here
+        std::unordered_map<Node *, double> g_score;
+        std::unordered_map<Node *, double> f_score;
 
+        for (auto& node: graph.nodes) {
+            g_score[node.second] = std::numeric_limits<double>::infinity();
+            f_score[node.second] = std::numeric_limits<double>::infinity();
+        }
+        g_score[src] = 0.0;
+        f_score[src] = heuristic(src, dest);
+
+        using Pair = std::pair<double, Node*>;
+        std::priority_queue<Pair, std::vector<Pair>, std::greater<>> pq;
+        pq.emplace(f_score[src], src);
+
+        while (!pq.empty()) {
+            auto [current_f, current_node] = pq.top();
+            pq.pop();
+
+            if (current_node == dest) break;
+            if (current_f > f_score[current_node]) continue;
+
+            for (Edge* edge : current_node->edges) {
+                Node *neighbor = (edge->src == current_node ? edge->dest : edge->src);
+                if (edge->one_way && edge->src != current_node) continue;
+
+                double tentative_g = g_score[current_node] + edge->getCost();
+                if (tentative_g < g_score[neighbor]) {
+                    parent[neighbor] = current_node;
+                    g_score[neighbor] = tentative_g;
+                    f_score[neighbor] = tentative_g + heuristic(neighbor, dest);
+                    pq.emplace(f_score[neighbor], neighbor);
+
+                    visited_edges.emplace_back(
+                            current_node->coord,
+                            neighbor->coord,
+                            sf::Color(150, 150, 150),
+                            1.0f
+                    );
+                    render();
+                }
+            }
+        }
         set_final_path(parent);
     }
 
