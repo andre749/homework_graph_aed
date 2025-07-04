@@ -83,6 +83,13 @@ public:
                                 path_finding_manager.exec(graph, AStar);
                                 break;
                             }
+
+                            // B = Ejecutar BFS
+                            case sf::Keyboard::B: {
+                                path_finding_manager.exec(graph, BestFirstSearch);
+                                break;
+                            }
+
                             // R = Limpia la ultima simulación realizada.
                             //     También restaura los valores de 'src' y 'dest' a nullptr.
                             case sf::Keyboard::R: {

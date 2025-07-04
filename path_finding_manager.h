@@ -16,7 +16,7 @@
 
 // Este enum sirve para identificar el algoritmo que el usuario desea simular
 enum Algorithm {
-    None,
+    BestFirstSearch,
     Dijkstra,
     AStar
 };
@@ -106,6 +106,61 @@ class PathFindingManager {
 
         set_final_path(parent);
     }
+
+    static double heuristic(Node* a, Node* b) {
+        double dx = a->coord.x - b->coord.x;
+        double dy = a->coord.y - b->coord.y;
+        return sqrt(dx * dx + dy * dy);
+    }
+
+
+
+    void Best_First_Search(Graph &graph) {
+        std::unordered_map<Node*, Node*> parent;
+        std::set<Node*> visited;
+
+        using Pair = std::pair<double, Node*>;
+        std::priority_queue<Pair, std::vector<Pair>, std::greater<>> pq;
+        pq.emplace(heuristic(src, dest), src);
+
+        while (!pq.empty()) {
+            auto [h, current] = pq.top();
+            pq.pop();
+
+            if (current == dest) break;
+            if (visited.count(current)) continue;
+
+            visited.insert(current);
+
+            for (Edge* edge : current->edges) {
+                Node *neighbor;
+                if (edge->src == current)
+                    neighbor = edge->dest;
+                else if (!edge->one_way)
+                    neighbor = edge->src;
+                else
+                    continue;
+
+                if (!visited.count(neighbor)) {
+                    parent[neighbor] = current;
+                    pq.emplace(heuristic(neighbor, dest), neighbor);
+
+                    visited_edges.emplace_back(
+                            current->coord,
+                            neighbor->coord,
+                            sf::Color(150, 150, 150),
+                            1.0f
+                    );
+
+                    render();
+                }
+            }
+        }
+
+        set_final_path(parent);
+    }
+
+
 
     //* --- render ---
     // En cada iteración de los algoritmos esta función es llamada para dibujar los cambios en el 'window_manager'
@@ -200,6 +255,9 @@ public:
                 break;
             case AStar:
                 a_star(graph);
+                break;
+            case BestFirstSearch:
+                Best_First_Search(graph);
                 break;
             default:
                 // Ningún algoritmo válido, salimos
