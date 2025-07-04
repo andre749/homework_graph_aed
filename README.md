@@ -1,9 +1,13 @@
 # Tarea de Grafos
 
 ## Integrantes: 
-- 1 ____   _____
-- 2 ____   _____
-- 3 ____   _____
+- 1 Angel Oriundo, Carlos Enrique
+- 2 Contreras Valera, André
+- 3 Rojas Martinez, Anel Mi Lucero
+- 4 Sanchez Dominguez, Matias Sebastian
+
+## Video sobre el funcionamiento de los algoritmos
+https://drive.google.com/drive/folders/183jS-aezblojDTnp7DUlgNrS3Ez-bz6K?usp=sharing
 
 ## Objetivo: 
 El objetivo de esta tarea es implementar un **Path Finder** para la ciudad de Lima. 
