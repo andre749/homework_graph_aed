@@ -92,7 +92,7 @@ class PathFindingManager {
                     visited_edges.emplace_back(
                             current_node->coord,
                             neighbor->coord,
-                            sf::Color(150, 150, 150),
+                            sf::Color(248, 248, 248),
                             1.0f
                     );
 
@@ -207,7 +207,7 @@ class PathFindingManager {
 
         sf::RenderWindow& window = window_manager->get_window();
 
-        window.clear(sf::Color::White);
+       //window.clear(sf::Color::White);
 
         // Dibujar las aristas visitadas (en color claro o intermedio)
         for (sfLine& edge : visited_edges) {
